@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gateway Fortage Bank - World Clock</title>
+    <link rel="stylesheet" href="css/clock-style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="clock-header">
+            <h1>Gateway Fortage Bank</h1>
+            <p>World Time Dashboard</p>
+        </div>
+
+        <div class="controls">
+            <button id="addClockBtn" class="btn-add-clock">+ Add Time Zone</button>
+            <button id="resetClocksBtn" class="btn-reset">Reset to Default</button>
+        </div>
+
+        <div class="clocks-container" id="clocksContainer">
+            <!-- Clocks will be dynamically inserted here -->
+        </div>
+
+        <div class="timezone-modal" id="timezoneModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Select Time Zone</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="timezoneSearch" placeholder="Search time zones..." class="timezone-search">
+                    <div class="timezone-list" id="timezoneList">
+                        <!-- Time zones will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/clock.js"></script>
+</body>
+</html>
