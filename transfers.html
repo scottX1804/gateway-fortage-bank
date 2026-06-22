@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfers - Gateway Fortage Bank</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .transfer-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .btn-submit:hover {
+            background-color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Gateway Bank</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="accounts.html">💳 Accounts</a></li>
+                <li><a href="transfers.html" class="active">💰 Transfers</a></li>
+                <li><a href="profile.html">👤 Profile</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Money Transfer</h1>
+            </header>
+
+            <div class="transfer-container">
+                <div class="card">
+                    <form id="transferForm">
+                        <div class="form-group">
+                            <label>Recipient Account Number</label>
+                            <input type="text" id="recipientAccount" placeholder="ACC1234567890" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Recipient Name</label>
+                            <input type="text" id="recipientName" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount</label>
+                            <input type="number" id="amount" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="description" placeholder="Purpose of transfer" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Send Transfer</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('transferForm')?.addEventListener('submit', handleTransfer);
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        });
+
+        async function handleTransfer(e) {
+            e.preventDefault();
+            const data = {
+                recipientAccount: document.getElementById('recipientAccount').value,
+                recipientName: document.getElementById('recipientName').value,
+                amount: parseFloat(document.getElementById('amount').value),
+                description: document.getElementById('description').value
+            };
+
+            showLoading();
+            try {
+                const response = await transactionAPI.transfer(data);
+                alert('Transfer successful! Ref: ' + response.transaction.referenceNumber);
+                document.getElementById('transferForm').reset();
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            } catch (error) {
+                alert('Transfer failed: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>

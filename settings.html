@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Gateway Fortage Bank</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .settings-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+        }
+        .section-title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Gateway Bank</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="accounts.html">💳 Accounts</a></li>
+                <li><a href="transfers.html">💰 Transfers</a></li>
+                <li><a href="profile.html">👤 Profile</a></li>
+                <li><a href="settings.html" class="active">⚙️ Settings</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Settings</h1>
+            </header>
+
+            <div class="settings-container">
+                <div class="card">
+                    <h2 class="section-title">Security Settings</h2>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmPassword" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn-primary">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('passwordForm')?.addEventListener('submit', handlePasswordChange);
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        });
+
+        async function handlePasswordChange(e) {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            const data = {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: newPassword
+            };
+
+            showLoading();
+            try {
+                await userAPI.changePassword(data);
+                alert('Password changed successfully!');
+                document.getElementById('passwordForm').reset();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>

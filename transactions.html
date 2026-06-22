@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - Gateway Fortage Bank</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .transactions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .filter-section input, .filter-section select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Gateway Bank</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="accounts.html">💳 Accounts</a></li>
+                <li><a href="transfers.html">💰 Transfers</a></li>
+                <li><a href="profile.html">👤 Profile</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1>Transaction History</h1>
+            </header>
+
+            <div class="transactions-container">
+                <div class="card">
+                    <div class="filter-section">
+                        <select id="typeFilter">
+                            <option value="">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="withdrawal">Withdrawals</option>
+                            <option value="transfer">Transfers</option>
+                        </select>
+                    </div>
+                    <div id="transactionsList" class="transactions-list"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadAllTransactions();
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+            document.getElementById('typeFilter')?.addEventListener('change', filterTransactions);
+        });
+
+        let allTransactions = [];
+
+        async function loadAllTransactions() {
+            showLoading();
+            try {
+                const response = await transactionAPI.getAll(100);
+                allTransactions = response.transactions;
+                displayTransactions(allTransactions);
+            } catch (error) {
+                alert('Error loading transactions: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function filterTransactions() {
+            const type = document.getElementById('typeFilter')?.value;
+            const filtered = type ? allTransactions.filter(t => t.type === type) : allTransactions;
+            displayTransactions(filtered);
+        }
+
+        function displayTransactions(transactions) {
+            const container = document.getElementById('transactionsList');
+            if (transactions.length === 0) {
+                container.innerHTML = '<p class="loading">No transactions found</p>';
+                return;
+            }
+
+            container.innerHTML = transactions.map(txn => `
+                <div class="transaction-item ${txn.type}">
+                    <div class="transaction-info">
+                        <div class="transaction-icon">${getTransactionIcon(txn.type)}</div>
+                        <div class="transaction-details">
+                            <h4>${txn.type.charAt(0).toUpperCase() + txn.type.slice(1)}</h4>
+                            <p>${txn.description}</p>
+                            <small>Ref: ${txn.referenceNumber}</small>
+                        </div>
+                    </div>
+                    <div class="transaction-amount">
+                        <div class="amount">${txn.type === 'withdrawal' || txn.type === 'transfer' ? '-' : '+'}${formatCurrency(txn.amount)}</div>
+                        <div class="date">${formatDate(txn.createdAt)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

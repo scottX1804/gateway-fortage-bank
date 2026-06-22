@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Gateway Fortage Bank</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Gateway Bank</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="dashboard.html">📊 Dashboard</a></li>
+                <li><a href="accounts.html">💳 Accounts</a></li>
+                <li><a href="transfers.html">💰 Transfers</a></li>
+                <li><a href="profile.html" class="active">👤 Profile</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header">
+                <h1>My Profile</h1>
+            </header>
+
+            <div class="profile-container">
+                <div class="card">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" id="lastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="email" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="button-group">
+                            <button type="submit" class="btn-primary">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!isAuthenticated()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            await loadProfile();
+            document.getElementById('profileForm')?.addEventListener('submit', updateProfile);
+            document.getElementById('logoutBtn')?.addEventListener('click', logout);
+        });
+
+        async function loadProfile() {
+            showLoading();
+            try {
+                const profile = await userAPI.getProfile();
+                document.getElementById('firstName').value = profile.firstName;
+                document.getElementById('lastName').value = profile.lastName;
+                document.getElementById('email').value = profile.email;
+                document.getElementById('phone').value = profile.phone;
+            } catch (error) {
+                alert('Error loading profile: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            const data = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value
+            };
+
+            showLoading();
+            try {
+                await userAPI.updateProfile(data);
+                alert('Profile updated successfully!');
+            } catch (error) {
+                alert('Error updating profile: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+    </script>
+</body>
+</html>
