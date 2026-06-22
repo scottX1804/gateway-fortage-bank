@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Gateway Fortage Bank</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>Gateway Bank</h2>
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+                <li><a href="accounts.html">💳 Accounts</a></li>
+                <li><a href="transfers.html">💰 Transfers</a></li>
+                <li><a href="profile.html">👤 Profile</a></li>
+                <li><a href="settings.html">⚙️ Settings</a></li>
+                <li><a href="#" id="logoutBtn">🚪 Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Welcome, <span id="userName">User</span>! 👋</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="avatar">
+                        <span id="userEmail">user@example.com</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-grid">
+                
+                <!-- Account Overview Card -->
+                <section class="card account-overview">
+                    <div class="card-header">
+                        <h2>Account Overview</h2>
+                        <span class="account-type" id="accountType">Checking</span>
+                    </div>
+                    <div class="account-details">
+                        <div class="detail-item">
+                            <label>Account Number</label>
+                            <p id="accountNumber">ACC1234567890</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Account Type</label>
+                            <p id="accountTypeDetail">Checking Account</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Member Since</label>
+                            <p id="memberSince">June 22, 2026</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Balance Card -->
+                <section class="card balance-card">
+                    <div class="card-header">
+                        <h2>Current Balance</h2>
+                    </div>
+                    <div class="balance-display">
+                        <p class="balance-label">Available Balance</p>
+                        <p class="balance-amount" id="balanceAmount">$1,000.00</p>
+                        <div class="balance-actions">
+                            <button class="btn btn-deposit" onclick="redirectTo('deposit.html')">Deposit</button>
+                            <button class="btn btn-withdraw" onclick="redirectTo('withdraw.html')">Withdraw</button>
+                            <button class="btn btn-transfer" onclick="redirectTo('transfers.html')">Transfer</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Quick Stats -->
+                <section class="card stats-card">
+                    <div class="card-header">
+                        <h2>Quick Stats</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-icon">📈</span>
+                            <div>
+                                <p class="stat-label">Total Deposits</p>
+                                <p class="stat-value" id="totalDeposits">$0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📉</span>
+                            <div>
+                                <p class="stat-label">Total Withdrawals</p>
+                                <p class="stat-value" id="totalWithdrawals">$0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">💸</span>
+                            <div>
+                                <p class="stat-label">Total Transfers</p>
+                                <p class="stat-value" id="totalTransfers">$0.00</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-icon">📋</span>
+                            <div>
+                                <p class="stat-label">Total Transactions</p>
+                                <p class="stat-value" id="totalTransactions">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Recent Transactions Section -->
+            <section class="card recent-transactions">
+                <div class="card-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="transactions.html" class="view-all">View All →</a>
+                </div>
+                
+                <div id="transactionsContainer" class="transactions-list">
+                    <p class="loading">Loading transactions...</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
